@@ -5,6 +5,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -21,6 +24,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,6 +75,9 @@ public class MainActivity extends Activity implements SensorEventListener{
                 boolean checked = t.isChecked();
                 if(checked){
                     try {
+                        if (!isWifiConnected()){
+                            throw new Exception("Wifi is not connected!");
+                        }
                         // validate ip address
                         String IP = IPeditText.getText().toString().replace(" ", "");
                         Matcher matcher = Patterns.IP_ADDRESS.matcher(IP);
@@ -81,33 +88,29 @@ public class MainActivity extends Activity implements SensorEventListener{
                         DatagramSocket socket = new DatagramSocket();
                         int port = Integer.parseInt(portEditText.getText().toString());
                         NetworkParams params = new NetworkParams(socket, inetAddress, port);
-                        executor = Executors.newSingleThreadExecutor();
-                        queue = new LinkedBlockingQueue<UDPPacket>(10);
-                        executor.submit(new UDPStream(params, queue));
+                        startStreaming(params);
                         enableFields(false);
 
                     } catch (UnknownHostException e) {
-                        Toast.makeText(MainActivity.this, "Error, Invalid IP!",
-                                Toast.LENGTH_LONG).show();
+                        showToast("Error, Invalid IP!");
                         enableFields(true);
                         // e.printStackTrace();
                         t.setChecked(false);
                     } catch (SocketException e) {
-                        Toast.makeText(MainActivity.this, "Error, Socket Problem!",
-                                Toast.LENGTH_LONG).show();
+                        showToast("Error, Socket Problem!");
                         enableFields(true);
                         // e.printStackTrace();
                         t.setChecked(false);
                     } catch (NumberFormatException e){
-                        Toast.makeText(MainActivity.this, "Error, please provide a valid port number!",
-                                Toast.LENGTH_LONG).show();
+                        showToast("Error, please provide a valid port number!");
+                        t.setChecked(false);
+                    } catch (Exception e){
+                        showToast("Error, WiFi is not connected!");
                         t.setChecked(false);
                     }
-
                 }
                 else{
-                    queue = null;
-                    executor.shutdownNow();
+                    stopStreaming();
                     enableFields(true);
                 }
             }
@@ -117,13 +120,41 @@ public class MainActivity extends Activity implements SensorEventListener{
     @Override
     protected void onPause() {
         super.onPause();
+        stopStreaming();
         mSensorManager.unregisterListener(this);
+        buttonSwitch.setChecked(false);
+        enableFields(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    private void startStreaming(NetworkParams params){
+        executor = Executors.newSingleThreadExecutor();
+        queue = new LinkedBlockingQueue<UDPPacket>(10);
+        executor.submit(new UDPStream(params, queue));
+    }
+
+    private void stopStreaming(){
+        if(queue != null){
+            queue = null;
+            executor.shutdownNow();
+        }
+    }
+
+    private boolean isWifiConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return networkInfo.isConnected();
+    }
+
+    private void showToast(String msg){
+        Toast.makeText(MainActivity.this, msg,
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -146,9 +177,9 @@ public class MainActivity extends Activity implements SensorEventListener{
             orientationVals[1] = (float) Math.toDegrees(orientationVals[1]);
             orientationVals[2] = (float) Math.toDegrees(orientationVals[2]);
 
-            textOrientX.setText(String.format("%.3f", orientationVals[0]));
-            textOrientY.setText(String.format("%.3f", orientationVals[1]));
-            textOrientZ.setText(String.format("%.3f", orientationVals[2]));
+            textOrientX.setText(String.format(Locale.ENGLISH, "%.3f", orientationVals[0]));
+            textOrientY.setText(String.format(Locale.ENGLISH, "%.3f", orientationVals[1]));
+            textOrientZ.setText(String.format(Locale.ENGLISH, "%.3f", orientationVals[2]));
 
             if(queue != null){
                 queue.offer(new UDPPacket(orientationVals[0], orientationVals[1], orientationVals[2],
@@ -191,14 +222,11 @@ public class MainActivity extends Activity implements SensorEventListener{
                     this.params.getSocket().send(p);
                 }
                 catch(Exception ex){
-                    Toast.makeText(MainActivity.this, "Error sending data!" + ex.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                    ex.printStackTrace();
+                    showToast("Error sending data!");
+                    //ex.printStackTrace();
                 }
             }
-
         }
-
     }
 
     private class NetworkParams {
