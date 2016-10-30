@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.br.sensorstream.MainActivity">
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/labelOrientation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="Orientation:"
+                android:paddingRight="12dp"
+                android:textSize="18sp" />
+
+
+
+            <TextView
+                android:id="@+id/OrientX"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="X"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/OrientY"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Y"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/OrientZ"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Z"
+                android:textSize="18sp" />
+        </TableRow>
+
+    </TableLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/IPeditText"
+            android:layout_weight="1"
+            android:hint="IP Address"
+            android:maxLines="1"
+            android:inputType="phone"
+            android:maxLength="15" />
+
+        <EditText
+            android:layout_width="94dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/portEditText"
+            android:hint="Port"
+            android:maxLines="1"
+            android:maxLength="6"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp">
+
+        <Button
+            android:text="Button1"
+            android:layout_width="match_parent"
+            android:layout_height="120sp"
+            android:layout_weight="1"
+            android:id="@+id/button1" />
+
+        <Button
+            android:text="Button2"
+            android:layout_width="match_parent"
+            android:layout_height="120sp"
+            android:layout_weight="1"
+            android:id="@+id/button2" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:text="Button3"
+            android:layout_width="match_parent"
+            android:layout_height="120sp"
+            android:layout_weight="1"
+            android:id="@+id/button3" />
+
+        <Button
+            android:text="Button4"
+            android:layout_width="match_parent"
+            android:layout_height="120sp"
+            android:layout_weight="1"
+            android:id="@+id/button4" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ToggleButton
+            android:text="ToggleButton"
+            android:layout_width="match_parent"
+            android:layout_marginTop="99dp"
+            android:id="@+id/buttonSwitch"
+            android:layout_alignParentBottom="true"
+            android:layout_height="60sp"
+            android:textOff="Stream Off"
+            android:textOn="Stream On" />
+    </RelativeLayout>
+
+</LinearLayout>
