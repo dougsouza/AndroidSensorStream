@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements SensorEventListener{
                     } catch (SocketException e) {
                         showToast("Error, Socket Problem!");
                         enableFields(true);
-                        // e.printStackTrace();
+                        e.printStackTrace();
                         t.setChecked(false);
                     } catch (NumberFormatException e){
                         showToast("Error, please provide a valid port number!");
