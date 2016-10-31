@@ -16,10 +16,10 @@ The data format sent to the specified IP:Port is:
 }
 ```
 
-Orientantion is in degrees, the state of the buttons are: pressed (true) not pressed (false).
+Orientation is in degrees, the state of the buttons are: pressed (true) not pressed (false).
 
 A simple program to receive (and process) the data could be (in Node.js):
-```
+```javascript
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 var port = 41234;
